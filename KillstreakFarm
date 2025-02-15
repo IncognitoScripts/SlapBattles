@@ -1,22 +1,27 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local LocalPlayer = Players.LocalPlayer
+local Workspace = game:GetService("Workspace")
+
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "KillstreakFarmGui"
 screenGui.ResetOnSpawn = false
 screenGui.Parent = game.CoreGui
+
 local mainFrame = Instance.new("Frame")
 mainFrame.Name = "MainFrame"
-mainFrame.Size = UDim2.new(0, 300, 0, 150)
+mainFrame.Size = UDim2.new(0, 270, 0, 120)
 mainFrame.Position = UDim2.new(0.5, -150, 0.5, -75)
 mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 mainFrame.BorderSizePixel = 0
 mainFrame.Active = true
 mainFrame.Draggable = true
 mainFrame.Parent = screenGui
+
 local frameCorner = Instance.new("UICorner")
 frameCorner.CornerRadius = UDim.new(0, 10)
 frameCorner.Parent = mainFrame
+
 local titleLabel = Instance.new("TextLabel")
 titleLabel.Name = "TitleLabel"
 titleLabel.Size = UDim2.new(1, 0, 0, 30)
@@ -26,6 +31,7 @@ titleLabel.TextColor3 = Color3.new(1, 1, 1)
 titleLabel.Font = Enum.Font.SourceSansBold
 titleLabel.TextSize = 24
 titleLabel.Parent = mainFrame
+
 local invisibleButton = Instance.new("TextButton")
 invisibleButton.Name = "InvisibleButton"
 invisibleButton.Size = UDim2.new(0, 120, 0, 30)
@@ -36,24 +42,64 @@ invisibleButton.TextColor3 = Color3.new(1, 1, 1)
 invisibleButton.Font = Enum.Font.SourceSansBold
 invisibleButton.TextSize = 18
 invisibleButton.Parent = mainFrame
+
 local btnCorner1 = Instance.new("UICorner")
 btnCorner1.CornerRadius = UDim.new(0, 10)
 btnCorner1.Parent = invisibleButton
+
+local antiVoidButton = Instance.new("TextButton")
+antiVoidButton.Name = "AntiVoidToggle"
+antiVoidButton.Size = UDim2.new(0, 120, 0, 30)
+antiVoidButton.Position = UDim2.new(0, 140, 0, 40)
+antiVoidButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+antiVoidButton.Text = "Anti Void: OFF"
+antiVoidButton.TextColor3 = Color3.new(1, 1, 1)
+antiVoidButton.Font = Enum.Font.SourceSansBold
+antiVoidButton.TextSize = 18
+antiVoidButton.Parent = mainFrame
+
+local btnCornerAV = Instance.new("UICorner")
+btnCornerAV.CornerRadius = UDim.new(0, 10)
+btnCornerAV.Parent = antiVoidButton
+
 local farmButton = Instance.new("TextButton")
 farmButton.Name = "FarmKillstreakToggle"
 farmButton.Size = UDim2.new(0, 120, 0, 30)
 farmButton.Position = UDim2.new(0, 10, 0, 80)
-farmButton.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+farmButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
 farmButton.Text = "Farm Killstreak: OFF"
 farmButton.TextColor3 = Color3.new(1, 1, 1)
 farmButton.Font = Enum.Font.SourceSansBold
 farmButton.TextSize = 18
 farmButton.Parent = mainFrame
+
 local btnCorner2 = Instance.new("UICorner")
 btnCorner2.CornerRadius = UDim.new(0, 10)
 btnCorner2.Parent = farmButton
+
+local safeModeButton = Instance.new("TextButton")
+safeModeButton.Name = "SafeModeToggle"
+safeModeButton.Size = UDim2.new(0, 120, 0, 30)
+safeModeButton.Position = UDim2.new(0, 140, 0, 80)
+safeModeButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+safeModeButton.Text = "Safe Mode: OFF"
+safeModeButton.TextColor3 = Color3.new(1, 1, 1)
+safeModeButton.Font = Enum.Font.SourceSansBold
+safeModeButton.TextSize = 18
+safeModeButton.Parent = mainFrame
+
+local btnCornerSM = Instance.new("UICorner")
+btnCornerSM.CornerRadius = UDim.new(0, 10)
+btnCornerSM.Parent = safeModeButton
+
 local farmEnabled = false
 local farmLoopRunning = false
+local antiVoidEnabled = false
+local safeModeEnabled = false
+local antiVoidPlatform
+local safeModeFunction
+local antiVoidFunction
+
 invisibleButton.MouseButton1Click:Connect(function()
     fireclickdetector(game.Workspace.Lobby.Ghost.ClickDetector)
     wait(0.2)
@@ -66,6 +112,54 @@ invisibleButton.MouseButton1Click:Connect(function()
         end
     end)
 end)
+
+antiVoidButton.MouseButton1Click:Connect(function()
+    antiVoidEnabled = not antiVoidEnabled
+    if antiVoidEnabled then
+        antiVoidButton.Text = "Anti Void: ON"
+        antiVoidButton.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+
+    
+        antiVoidPlatform = Instance.new("Part")
+        antiVoidPlatform.Size = Vector3.new(3000, 1, 3000)
+        antiVoidPlatform.Position = Vector3.new(0, -9, 0)
+        antiVoidPlatform.Anchored = true
+        antiVoidPlatform.Transparency = 1
+        antiVoidPlatform.CanCollide = true
+        antiVoidPlatform.Parent = Workspace
+
+       
+        antiVoidFunction = spawn(function()
+            while antiVoidEnabled do
+                if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                    local position = LocalPlayer.Character.HumanoidRootPart.Position
+                    if position.Y <= -50 then
+                        LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(Vector3.new(0, 50, 0)))
+                    end
+                end
+                wait(0.1)
+            end
+        end)
+    else
+        antiVoidButton.Text = "Anti Void: OFF"
+        antiVoidButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+
+      
+        if antiVoidPlatform then
+            antiVoidPlatform:Destroy()
+            antiVoidPlatform = nil
+        end
+
+   
+        if antiVoidFunction then
+            pcall(function()
+                antiVoidFunction:Disconnect()
+            end)
+            antiVoidFunction = nil
+        end
+    end
+end)
+
 local function startFarmLoop()
     farmLoopRunning = true
     spawn(function()
@@ -73,7 +167,9 @@ local function startFarmLoop()
             local validPlayers = {}
             for i, v in pairs(Players:GetPlayers()) do
                 if v ~= LocalPlayer and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
-                    table.insert(validPlayers, v)
+                    if v.Character.HumanoidRootPart.Position.Y <= 300 then
+                        table.insert(validPlayers, v)
+                    end
                 end
             end
             if #validPlayers > 0 then
@@ -94,13 +190,39 @@ local function startFarmLoop()
         end
     end)
 end
+
 farmButton.MouseButton1Click:Connect(function()
     farmEnabled = not farmEnabled
     if farmEnabled then
         farmButton.Text = "Farm Killstreak: ON"
+        farmButton.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
         startFarmLoop()
     else
         farmButton.Text = "Farm Killstreak: OFF"
+        farmButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
         farmLoopRunning = false
+    end
+end)
+
+safeModeButton.MouseButton1Click:Connect(function()
+    safeModeEnabled = not safeModeEnabled
+    if safeModeEnabled then
+        safeModeButton.Text = "Safe Mode: ON"
+        safeModeButton.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+
+      
+        local Object = workspace.Arena.CubeOfDeathArea["the cube of death(i heard it kills)"]
+        if Object and Object.CanTouch then
+            Object.CanTouch = false
+        end
+    else
+        safeModeButton.Text = "Safe Mode: OFF"
+        safeModeButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+
+       
+        local Object = workspace.Arena.CubeOfDeathArea["the cube of death(i heard it kills)"]
+        if Object and Object.CanTouch then
+            Object.CanTouch = true
+        end
     end
 end)
