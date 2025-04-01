@@ -1,0 +1,147 @@
+-- What are you doing here skid
+local PlayerGui = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local ScreenGui = Instance.new("ScreenGui", PlayerGui)
+
+local Button = Instance.new("TextButton")
+Button.Size = UDim2.new(0, 60, 0, 60)
+Button.Position = UDim2.new(0, 20, 0.5, -30)
+Button.BackgroundColor3 = Color3.fromRGB(50, 150, 255)
+Button.Text = "Open"
+Button.TextSize = 14
+Button.Font = Enum.Font.GothamBold
+Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+Button.Parent = ScreenGui
+
+local GUI = Instance.new("Frame")
+GUI.Size = UDim2.new(0, 300, 0, 250)
+GUI.Position = UDim2.new(0.5, -150, 0.5, -125)
+GUI.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+GUI.Visible = false
+GUI.Parent = ScreenGui
+
+local UIStroke = Instance.new("UIStroke", GUI)
+UIStroke.Thickness = 4
+UIStroke.Color = Color3.fromRGB(255, 50, 50)
+
+local CloseButton = Instance.new("TextButton")
+CloseButton.Size = UDim2.new(0, 40, 0, 40)
+CloseButton.Position = UDim2.new(1, -45, 0, 5)
+CloseButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+CloseButton.Text = "X"
+CloseButton.Font = Enum.Font.GothamBold
+CloseButton.TextSize = 20
+CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseButton.Parent = GUI
+
+local InvisibleButton = Instance.new("TextButton")
+InvisibleButton.Size = UDim2.new(0, 40, 0, 40)
+InvisibleButton.Position = UDim2.new(0, 5, 0, 5)
+InvisibleButton.BackgroundColor3 = Color3.fromRGB(50, 150, 255)
+InvisibleButton.Text = "X"
+InvisibleButton.Font = Enum.Font.GothamBold
+InvisibleButton.TextSize = 20
+InvisibleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+InvisibleButton.Parent = GUI
+
+local TextBox = Instance.new("TextBox")
+TextBox.Size = UDim2.new(0.8, 0, 0, 40)
+TextBox.Position = UDim2.new(0.1, 0, 0.2, 0)
+TextBox.PlaceholderText = "Enter Player Name"
+TextBox.TextSize = 18
+TextBox.Font = Enum.Font.GothamBold
+TextBox.Parent = GUI
+
+local StartButton = Instance.new("TextButton")
+StartButton.Size = UDim2.new(0.4, -5, 0, 50)
+StartButton.Position = UDim2.new(0.1, 0, 0.4, 0)
+StartButton.BackgroundColor3 = Color3.fromRGB(50, 200, 50)
+StartButton.Text = "Start"
+StartButton.Font = Enum.Font.GothamBold
+StartButton.TextSize = 20
+StartButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+StartButton.Parent = GUI
+
+local StopButton = Instance.new("TextButton")
+StopButton.Size = UDim2.new(0.4, -5, 0, 50)
+StopButton.Position = UDim2.new(0.5, 5, 0.4, 0)
+StopButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+StopButton.Text = "Stop"
+StopButton.Font = Enum.Font.GothamBold
+StopButton.TextSize = 20
+StopButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+StopButton.Parent = GUI
+
+local Sound = Instance.new("Sound")
+Sound.SoundId = "rbxassetid://5213679380"
+Sound.Volume = 2
+Sound.Parent = GUI
+
+local running = false
+local LocalPlayer = game:GetService("Players").LocalPlayer
+
+local function findPlayer(shortName)
+    for _, player in pairs(Players:GetPlayers()) do
+        if player.Name:lower():sub(1, #shortName) == shortName:lower() then
+            return player
+        end
+    end
+end
+
+Button.MouseButton1Click:Connect(function()
+    Button.Visible = false
+    GUI.Visible = true
+end)
+
+CloseButton.MouseButton1Click:Connect(function()
+    GUI.Visible = false
+    Button.Visible = true
+    Button.Transparency = 0
+end)
+
+InvisibleButton.MouseButton1Click:Connect(function()
+    GUI.Visible = false
+    Button.Visible = true
+    Button.Transparency = 1
+end)
+
+StartButton.MouseButton1Click:Connect(function()
+    if running then return end
+    local targetPlayer = findPlayer(TextBox.Text)
+    if targetPlayer and targetPlayer:FindFirstChild("leaderstats") and targetPlayer.leaderstats:FindFirstChild("Slaps") and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        running = true
+        while running do
+            local hrp = targetPlayer.Character.HumanoidRootPart
+            hrp.CFrame = LocalPlayer.Character.HumanoidRootPart.CFrame
+            Sound:Play()
+
+            local args = {
+                [1] = {
+                    ["Direction"] = Vector3.new(1, 0.009999999776482582, 0),
+                    ["Force"] = 40
+                }
+            }
+            ReplicatedStorage:WaitForChild("SelfKnockback", 9e9):FireServer(unpack(args))
+
+            targetPlayer.leaderstats.Slaps.Value += 1
+
+            task.spawn(function()
+                task.wait(0.4)
+                for _ = 1, 5 do
+                    if running and targetPlayer.Character and hrp then
+                        hrp.CFrame = CFrame.new(10000, 10000, 10000)
+                    end
+                    task.wait(0.1)
+                end
+            end)
+
+            task.wait(2.3)
+        end
+    end
+end)
+
+StopButton.MouseButton1Click:Connect(function()
+    running = false
+end)
