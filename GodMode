@@ -1,0 +1,27 @@
+local pl = game:GetService("Players").LocalPlayer
+local toolClone
+local function doOnce()
+	if pl.Character and pl.Character:FindFirstChild("HumanoidRootPart") then
+		pl.Character.HumanoidRootPart.CFrame = CFrame.new(-909, 328, 3.32)
+	end
+	wait(1)
+	local model = workspace:FindFirstChild(pl.Name)
+	if model then
+		local tool = model:FindFirstChildWhichIsA("Tool")
+		if tool then
+			toolClone = tool:Clone()
+		end
+	end
+	if pl.Character and pl.Character:FindFirstChildOfClass("Humanoid") then
+		pl.Character:FindFirstChildOfClass("Humanoid").Health = 0
+	end
+end
+doOnce()
+pl.CharacterAdded:Connect(function(char)
+	char:WaitForChild("HumanoidRootPart")
+	wait(0.5)
+	if toolClone then
+		toolClone.Parent = char
+	end
+	char.HumanoidRootPart.CFrame = CFrame.new(0, 0, 0)
+end)
