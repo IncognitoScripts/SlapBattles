@@ -1,0 +1,15 @@
+Copyright (c) 2025 Incognito Scripts
+
+All rights reserved.
+
+Permission is granted to anyone to use this script for personal use only.
+
+The following actions are strictly prohibited without prior written permission:
+- Reuploading or redistributing this script in any form (including paste sites, lootlinks, file hosts, or YouTube descriptions).
+- Modifying and reuploading this script as your own work.
+- Selling, licensing, or monetizing this script.
+
+If you wish to showcase this script in a video, you may do so only by running it in-game. 
+You may NOT provide direct or indirect download links to the script.
+
+Violation of these terms may result in copyright takedowns (DMCA) and further legal action.
